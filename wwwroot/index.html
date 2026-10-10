@@ -1,0 +1,921 @@
+﻿<!-- Documento HTML5. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Permite usar tildes y adapta la página a celulares. -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chocolato | Inventario</title>
+
+    <style>
+        /* Paleta de colores de la página. */
+        :root {
+            --chocolate: #63351f;
+            --oscuro: #321a13;
+            --dorado: #d99a45;
+            --crema: #fff5e6;
+            --borde: #e8c9a3;
+            --texto: #39251b;
+        }
+
+        /* Incluye bordes y relleno en el tamaño de los elementos. */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Fuente y fondo general. */
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--texto);
+            background: linear-gradient(135deg, #fff5e6, #f3dfc5);
+            min-height: 100vh;
+        }
+
+        /* Barra superior con fondo chocolate. */
+        .barra {
+            padding: 22px 24px;
+            background: linear-gradient(110deg, var(--oscuro), var(--chocolate));
+            border-bottom: 4px solid var(--dorado);
+            color: white;
+        }
+
+        /* Alineación de la marca y el enlace. */
+        .barra-contenido {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        /* Nombre de la marca. */
+        .marca {
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+            .marca span {
+                color: #ffd391;
+            }
+
+        /* Enlace hacia Swagger. */
+        .barra a {
+            padding: 10px 15px;
+            border: 1px solid #d99a4580;
+            border-radius: 10px;
+            color: #ffe6c1;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+            .barra a:hover {
+                background: #ffffff12;
+            }
+
+        /* Contenedor principal. */
+        main {
+            max-width: 1200px;
+            margin: auto;
+            padding: 32px 24px 48px;
+        }
+
+        /* Encabezado decorativo. */
+        .presentacion {
+            position: relative;
+            overflow: hidden;
+            padding: 36px;
+            margin-bottom: 24px;
+            border-radius: 22px;
+            background: linear-gradient(120deg, #63351f, #9c6035);
+            color: white;
+            box-shadow: 0 12px 30px #63351f20;
+        }
+
+            /* Círculo decorativo detrás del encabezado. */
+            .presentacion::after {
+                content: "";
+                position: absolute;
+                width: 250px;
+                height: 250px;
+                right: -65px;
+                top: -85px;
+                border: 35px solid #ffffff0d;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+
+        /* Etiqueta pequeña encima del título. */
+        .etiqueta {
+            color: #ffda9e;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            position: relative;
+            margin: 12px 0;
+            font-size: clamp(30px, 5vw, 44px);
+            letter-spacing: -1px;
+            z-index: 1;
+        }
+
+        .presentacion p {
+            position: relative;
+            margin: 0;
+            color: #f5dfc9;
+            line-height: 1.6;
+            z-index: 1;
+        }
+
+        /* Distribución de las tarjetas de indicadores. */
+        .resumen {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        /* Estilo general de cada indicador. */
+        .indicador {
+            padding: 22px;
+            border-radius: 16px;
+            border: 1px solid var(--borde);
+            box-shadow: 0 5px 15px #63351f08;
+        }
+
+            /* Colores diferentes para cada tarjeta. */
+            .indicador:nth-child(1) {
+                background: #fff8ed;
+            }
+
+            .indicador:nth-child(2) {
+                background: #eaf4ed;
+                border-color: #c4ddca;
+            }
+
+            .indicador:nth-child(3) {
+                background: #fff0e4;
+                border-color: #f0c7a2;
+            }
+
+            .indicador span {
+                display: block;
+                color: #68513e;
+                font-size: 12px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+
+            .indicador strong {
+                font-size: 30px;
+            }
+
+            .indicador:nth-child(1) strong {
+                color: var(--chocolate);
+            }
+
+            .indicador:nth-child(2) strong {
+                color: #29603b;
+            }
+
+            .indicador:nth-child(3) strong {
+                color: #934719;
+            }
+
+        /* Distribución del formulario y el catálogo. */
+        .contenido {
+            display: grid;
+            grid-template-columns: 330px minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* Tarjetas principales. */
+        .tarjeta {
+            min-width: 0;
+            padding: 26px;
+            background: #fffdfa;
+            border: 1px solid var(--borde);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px #63351f08;
+        }
+
+        /* Franja dorada sobre el formulario. */
+        .formulario-tarjeta {
+            border-top: 5px solid var(--dorado);
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            color: var(--chocolate);
+            font-size: 22px;
+        }
+
+        .ayuda {
+            margin: 0 0 20px;
+            color: #7c6553;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* Etiquetas y campos de entrada. */
+        label {
+            display: block;
+            margin: 18px 0 8px;
+            color: #634833;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid var(--borde);
+            border-radius: 10px;
+            background: #fff8ee;
+            color: var(--texto);
+            font: inherit;
+        }
+
+            input::placeholder {
+                color: #967e68;
+            }
+
+            input:focus {
+                outline: none;
+                border-color: #b77522;
+                background: white;
+                box-shadow: 0 0 0 4px #d99a4526;
+            }
+
+        /* Botones principales. */
+        button {
+            padding: 12px 16px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--chocolate);
+            color: white;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+
+            button:hover:not(:disabled) {
+                background: var(--oscuro);
+                transform: translateY(-1px);
+            }
+
+            button:disabled {
+                opacity: .5;
+                cursor: wait;
+            }
+
+            /* Contorno para navegar con el teclado. */
+            button:focus-visible,
+            a:focus-visible {
+                outline: 3px solid #b77522;
+                outline-offset: 3px;
+            }
+
+        /* Botones secundarios con fondo dorado claro. */
+        .secundario {
+            background: #f4dfbd;
+            color: #57351d;
+        }
+
+            .secundario:hover:not(:disabled) {
+                background: #eacb98;
+            }
+
+        /* Botones del formulario. */
+        #guardar, #cancelar {
+            width: 100%;
+        }
+
+        #guardar {
+            margin-top: 24px;
+            padding: 14px;
+            background: linear-gradient(100deg, #63351f, #92502b);
+        }
+
+            #guardar:hover:not(:disabled) {
+                background: var(--oscuro);
+            }
+
+        #cancelar {
+            margin-top: 10px;
+        }
+
+        /* Buscador y sus botones. */
+        #formBusqueda {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin: 22px 0;
+        }
+
+            #formBusqueda label {
+                width: 100%;
+                margin: 0;
+            }
+
+        #busqueda {
+            flex: 1 1 180px;
+            width: auto;
+            min-width: 0;
+        }
+
+        /* Contenedor desplazable de la tabla. */
+        .tabla {
+            overflow-x: auto;
+            border: 1px solid var(--borde);
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        /* Encabezados de la tabla con fondo chocolate. */
+        th {
+            padding: 16px 12px;
+            background: var(--chocolate);
+            color: #fff1dc;
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* Celdas y filas del catálogo. */
+        td {
+            padding: 17px 12px;
+            border-top: 1px solid #efdfca;
+            vertical-align: middle;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fff7eb;
+        }
+
+        tbody tr:hover {
+            background: #ffedcf;
+        }
+
+        td:nth-child(2) {
+            font-weight: 600;
+        }
+
+        td:nth-child(3), td:nth-child(4) {
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        /* Presentación de las existencias. */
+        .stock {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 7px;
+            background: #e8f3eb;
+            color: #29603b;
+            font-weight: 600;
+        }
+
+            .stock.agotado {
+                background: #fde9e4;
+                color: #a33324;
+            }
+
+        /* Botones de cada producto. */
+        .acciones {
+            white-space: nowrap;
+        }
+
+            .acciones button {
+                padding: 8px 10px;
+                margin-right: 5px;
+                border-radius: 8px;
+                font-size: 12px;
+            }
+
+        .editar {
+            background: #e5edf7;
+            color: #24558b;
+        }
+
+            .editar:hover:not(:disabled) {
+                background: #ccdff4;
+            }
+
+        .eliminar {
+            background: #fde9e4;
+            color: #a33324;
+        }
+
+            .eliminar:hover:not(:disabled) {
+                background: #f9cec4;
+            }
+
+        /* Mensaje cuando no hay resultados. */
+        .vacio {
+            padding: 35px;
+            text-align: center;
+            color: #7c6553;
+        }
+
+        /* Mensajes de la aplicación. */
+        #mensaje {
+            margin-bottom: 24px;
+            padding: 15px 18px;
+            border-radius: 12px;
+            white-space: pre-line;
+            line-height: 1.6;
+        }
+
+            #mensaje:empty {
+                display: none;
+            }
+
+        .exito {
+            background: #eaf4ed;
+            border: 1px solid #c4ddca;
+            color: #29603b;
+        }
+
+        .error {
+            background: #fde9e4;
+            border: 1px solid #efbfb5;
+            color: #a33324;
+        }
+
+        /* Pie de página. */
+        footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 12px;
+            color: #7c6553;
+        }
+
+        /* Ajusta el contenido para tabletas. */
+        @media (max-width: 950px) {
+            .contenido {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* Ajusta el contenido para celulares. */
+        @media (max-width: 560px) {
+            main {
+                padding: 24px 14px 40px;
+            }
+
+            .barra {
+                padding: 18px 16px;
+            }
+
+            .marca {
+                font-size: 18px;
+            }
+
+            .presentacion, .tarjeta {
+                padding: 22px;
+            }
+
+            .resumen {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Barra de navegación y enlace a Swagger. -->
+    <header class="barra">
+        <div class="barra-contenido">
+            <div class="marca">CHOCOLATO<span> / INVENTARIO</span></div>
+            <a href="/swagger">Ver API en Swagger</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Presentación de la página. -->
+        <header class="presentacion">
+            <span class="etiqueta">Administración de productos</span>
+            <h1>Tu inventario, organizado.</h1>
+            <p>Agrega productos, consulta existencias y actualiza tu catálogo.</p>
+        </header>
+
+        <!-- Área accesible para mensajes de éxito y error. -->
+        <div id="mensaje" role="status" aria-live="polite"></div>
+
+        <!-- Indicadores calculados sobre los productos mostrados. -->
+        <div class="resumen">
+            <div class="indicador">
+                <span>Productos mostrados</span>
+                <strong id="totalProductos">—</strong>
+            </div>
+            <div class="indicador">
+                <span>Unidades mostradas</span>
+                <strong id="totalUnidades">—</strong>
+            </div>
+            <div class="indicador">
+                <span>Productos sin stock mostrados</span>
+                <strong id="sinStock">—</strong>
+            </div>
+        </div>
+
+        <div class="contenido">
+            <!-- Formulario para crear y actualizar productos. -->
+            <section class="tarjeta formulario-tarjeta">
+                <h2 id="tituloFormulario">Nuevo producto</h2>
+                <p class="ayuda">Completa los datos para guardar un producto.</p>
+
+                <form id="formulario">
+                    <!-- Nombre obligatorio de hasta 100 caracteres. -->
+                    <label for="nombre">Nombre del producto</label>
+                    <input id="nombre" placeholder="Chocolate artesanal"
+                           required maxlength="100">
+
+                    <!-- Precio positivo con dos decimales. -->
+                    <label for="precio">Precio</label>
+                    <input id="precio" type="number" placeholder="0.00"
+                           min="0.01" max="999999999" step="0.01" required>
+
+                    <!-- Existencias enteras y no negativas. -->
+                    <label for="stock">Unidades disponibles</label>
+                    <input id="stock" type="number" placeholder="0"
+                           min="0" max="2147483647" step="1" required>
+
+                    <!-- Envía el formulario. -->
+                    <button id="guardar" type="submit">Guardar producto</button>
+
+                    <!-- Limpia los campos y termina la edición. -->
+                    <button id="cancelar" type="button" class="secundario">
+                        Cancelar
+                    </button>
+                </form>
+            </section>
+
+            <!-- Buscador y tabla de productos. -->
+            <section class="tarjeta">
+                <h2>Catálogo de productos</h2>
+                <p class="ayuda">Consulta y administra los productos registrados.</p>
+
+                <form id="formBusqueda">
+                    <label for="busqueda">Buscar por nombre</label>
+                    <input id="busqueda" placeholder="Escribe un nombre…">
+                    <button type="submit">Buscar</button>
+                    <button id="mostrarTodos" type="button" class="secundario">
+                        Mostrar todos
+                    </button>
+                </form>
+
+                <!-- Permite desplazar la tabla en pantallas pequeñas. -->
+                <div class="tabla">
+                    <table aria-label="Productos registrados">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <!-- JavaScript agrega aquí los productos. -->
+                        <tbody id="productos"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <footer>Chocolato · Gestión de productos</footer>
+    </main>
+
+    <script>
+        // Dirección de la API en el mismo servidor.
+        const api = "/api/Productos";
+
+        // Función auxiliar para encontrar elementos HTML.
+        const obtener = id => document.getElementById(id);
+
+        // Referencias a los controles de la página.
+        const formulario = obtener("formulario");
+        const nombre = obtener("nombre");
+        const precio = obtener("precio");
+        const stock = obtener("stock");
+        const busqueda = obtener("busqueda");
+        const tabla = obtener("productos");
+        const mensaje = obtener("mensaje");
+        const guardar = obtener("guardar");
+        const titulo = obtener("tituloFormulario");
+
+        // Identificador del producto en edición; null significa crear.
+        let idEdicion = null;
+
+        // Evita realizar varias modificaciones al mismo tiempo.
+        let ocupado = false;
+
+        // Identifica la búsqueda más reciente.
+        let numeroConsulta = 0;
+
+        // Formatea los precios con dos decimales.
+        const formatoPrecio = new Intl.NumberFormat("es-GT", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        // Muestra mensajes sin interpretar su contenido como HTML.
+        function informar(texto, error = false) {
+            mensaje.textContent = texto;
+            mensaje.className = error ? "error" : "exito";
+        }
+
+        // Bloquea o habilita los controles que modifican productos.
+        function establecerOcupado(valor) {
+            ocupado = valor;
+
+            formulario.querySelectorAll("input, button")
+                .forEach(control => control.disabled = valor);
+
+            tabla.querySelectorAll("button")
+                .forEach(boton => boton.disabled = valor);
+        }
+
+        // Envía peticiones HTTP y procesa los errores del servidor.
+        async function solicitar(url, opciones = {}) {
+            const respuesta = await fetch(url, opciones);
+
+            if (!respuesta.ok) {
+                // Intenta obtener los detalles del error.
+                const detalle = await respuesta.json().catch(() => null);
+
+                // Reúne los errores de validación o el mensaje general.
+                const errores = detalle?.errors
+                    ? Object.values(detalle.errors).flat().join("\n")
+                    : detalle?.detail || detalle?.title;
+
+                throw new Error(
+                    errores || `La solicitud falló: ${respuesta.status}.`
+                );
+            }
+
+            // PUT y DELETE pueden devolver 204 sin contenido.
+            if (respuesta.status === 204) return null;
+
+            // Convierte la respuesta JSON a objetos de JavaScript.
+            return respuesta.json();
+        }
+
+        // Restablece el formulario al modo de creación.
+        function limpiarFormulario() {
+            idEdicion = null;
+            formulario.reset();
+            titulo.textContent = "Nuevo producto";
+            guardar.textContent = "Guardar producto";
+        }
+
+        // Calcula los indicadores de los productos mostrados.
+        function actualizarResumen(productos) {
+            obtener("totalProductos").textContent = productos.length;
+
+            obtener("totalUnidades").textContent =
+                productos.reduce(
+                    (total, producto) => total + producto.stock,
+                    0
+                );
+
+            obtener("sinStock").textContent =
+                productos.filter(producto => producto.stock === 0).length;
+        }
+
+        // Coloca un producto en el formulario para editarlo.
+        function editarProducto(producto) {
+            if (ocupado) return;
+
+            idEdicion = producto.id;
+            nombre.value = producto.nombre;
+            precio.value = producto.precio;
+            stock.value = producto.stock;
+            titulo.textContent = `Editar producto #${producto.id}`;
+            guardar.textContent = "Guardar cambios";
+            nombre.focus();
+        }
+
+        // Elimina un producto después de solicitar confirmación.
+        async function eliminarProducto(producto) {
+            if (ocupado) return;
+            if (!confirm(`¿Eliminar "${producto.nombre}"?`)) return;
+
+            establecerOcupado(true);
+
+            try {
+                // Envía una petición DELETE con el identificador.
+                await solicitar(`${api}/${producto.id}`, {
+                    method: "DELETE"
+                });
+
+                // Cancela la edición si se eliminó ese producto.
+                if (idEdicion === producto.id) limpiarFormulario();
+
+                informar("Producto eliminado correctamente.");
+            } catch (error) {
+                informar(error.message, true);
+                return;
+            } finally {
+                establecerOcupado(false);
+            }
+
+            // Vuelve a consultar la lista después de eliminar.
+            await refrescarLista();
+        }
+
+        // Consulta los productos y construye la tabla.
+        async function cargarProductos() {
+            const consultaActual = ++numeroConsulta;
+            const filtro = busqueda.value.trim();
+
+            // Codifica el nombre para enviarlo como parámetro de la URL.
+            const url = filtro
+                ? `${api}?nombre=${encodeURIComponent(filtro)}`
+                : api;
+
+            let productos;
+
+            try {
+                // GET consulta todos los productos o aplica el filtro.
+                productos = await solicitar(url);
+            } catch (error) {
+                // Ignora errores de consultas que ya fueron reemplazadas.
+                if (consultaActual !== numeroConsulta) return;
+                throw error;
+            }
+
+            // Ignora respuestas de búsquedas anteriores.
+            if (consultaActual !== numeroConsulta) return;
+
+            tabla.replaceChildren();
+            actualizarResumen(productos);
+
+            // Muestra un mensaje cuando no hay resultados.
+            if (productos.length === 0) {
+                const celda = tabla.insertRow().insertCell();
+                celda.colSpan = 5;
+                celda.className = "vacio";
+                celda.textContent = "No se encontraron productos.";
+                return;
+            }
+
+            // Crea una fila por cada producto recibido.
+            for (const producto of productos) {
+                const fila = tabla.insertRow();
+
+                // Inserta los datos como texto para evitar interpretar HTML.
+                fila.insertCell().textContent = producto.id;
+                fila.insertCell().textContent = producto.nombre;
+                fila.insertCell().textContent =
+                    formatoPrecio.format(producto.precio);
+
+                // Crea una etiqueta coloreada para las existencias.
+                const celdaStock = fila.insertCell();
+                const etiquetaStock = document.createElement("span");
+
+                etiquetaStock.className =
+                    producto.stock === 0 ? "stock agotado" : "stock";
+
+                etiquetaStock.textContent = producto.stock;
+                celdaStock.append(etiquetaStock);
+
+                // Crea la celda de acciones.
+                const acciones = fila.insertCell();
+                acciones.className = "acciones";
+
+                // Botón azul para editar el producto.
+                const editar = document.createElement("button");
+                editar.type = "button";
+                editar.textContent = "Editar";
+                editar.className = "editar";
+                editar.disabled = ocupado;
+
+                editar.addEventListener(
+                    "click",
+                    () => editarProducto(producto)
+                );
+
+                // Botón rojo para eliminar el producto.
+                const eliminar = document.createElement("button");
+                eliminar.type = "button";
+                eliminar.textContent = "Eliminar";
+                eliminar.className = "eliminar";
+                eliminar.disabled = ocupado;
+
+                eliminar.addEventListener(
+                    "click",
+                    () => eliminarProducto(producto)
+                );
+
+                acciones.append(editar, eliminar);
+            }
+        }
+
+        // Actualiza la tabla y muestra posibles errores de consulta.
+        async function refrescarLista() {
+            try {
+                await cargarProductos();
+            } catch (error) {
+                informar(
+                    `No se pudo actualizar la lista: ${error.message}`,
+                    true
+                );
+            }
+        }
+
+        // Guarda un producto cuando se envía el formulario.
+        formulario.addEventListener("submit", async evento => {
+            // Evita que el navegador recargue la página.
+            evento.preventDefault();
+
+            if (ocupado) return;
+
+            // Rechaza nombres que contengan solamente espacios.
+            if (!nombre.value.trim()) {
+                informar("El nombre es obligatorio.", true);
+                nombre.focus();
+                return;
+            }
+
+            // Prepara los datos que recibirá la API.
+            const producto = {
+                nombre: nombre.value.trim(),
+                precio: Number(precio.value),
+                stock: Number(stock.value)
+            };
+
+            // Determina si se creará o actualizará el producto.
+            const editando = idEdicion !== null;
+            const url = editando ? `${api}/${idEdicion}` : api;
+
+            establecerOcupado(true);
+
+            try {
+                await solicitar(url, {
+                    // POST crea y PUT actualiza.
+                    method: editando ? "PUT" : "POST",
+
+                    // Indica que el cuerpo se envía en formato JSON.
+                    headers: { "Content-Type": "application/json" },
+
+                    // Convierte el objeto a texto JSON.
+                    body: JSON.stringify(producto)
+                });
+
+                limpiarFormulario();
+
+                informar(editando
+                    ? "Cambios guardados correctamente."
+                    : "Producto creado correctamente.");
+            } catch (error) {
+                informar(error.message, true);
+                return;
+            } finally {
+                establecerOcupado(false);
+            }
+
+            await refrescarLista();
+        });
+
+        // Aplica el filtro al pulsar Buscar o presionar Enter.
+        obtener("formBusqueda").addEventListener("submit", async evento => {
+            evento.preventDefault();
+            informar("");
+            await refrescarLista();
+        });
+
+        // Quita el filtro para mostrar todos los productos.
+        obtener("mostrarTodos").addEventListener("click", async () => {
+            busqueda.value = "";
+            informar("");
+            await refrescarLista();
+        });
+
+        // Limpia el formulario al pulsar Cancelar.
+        obtener("cancelar").addEventListener("click", limpiarFormulario);
+
+        // Carga el catálogo cuando se abre la página.
+        refrescarLista();
+    </script>
+</body>
+</html>
